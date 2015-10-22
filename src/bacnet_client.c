@@ -288,17 +288,21 @@ static void array_tail(uint16_t data, instance_obj *instance) {
     instance->haystack[instance->num_words - 1] = data;
 
 #if debug
+    printf("Haystack (%i:%i): -------\n", instance->parent->device_id, instance->instance_no);
     for (i = 0; i < instance->num_words; i++) {
 	printf("%04X ", instance->haystack[i]);
 	if ((i % 8) == 7) printf("\n");
     }
     printf("\n");
+    fflush(stdout);
 
+    printf("Needle (%i:%i): -------\n", instance->parent->device_id, instance->instance_no);
     for (i = 0; i < instance->num_words; i++) {
 	printf("%04X ", instance->needle[i]);
 	if ((i % 8) == 7) printf("\n");
     }
     printf("\n");
+    fflush(stdout);
 #endif
 
     if (!memcmp(instance->needle, 
@@ -307,6 +311,7 @@ static void array_tail(uint16_t data, instance_obj *instance) {
 	instance->match = 1;
 	printf("Successful match for device %i, instance %i\n",
 			instance->parent->device_id, instance->instance_no);
+	fflush(stdout);
     }
 }
 
