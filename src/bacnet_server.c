@@ -148,7 +148,7 @@ static void *modbus(void *arg)
 		  
 		     }
 	//sleep(1);
-	sleep(100000);		//recalled every 100ms
+	usleep(100000);		//recalled every 100ms
 	}
 	modbus_close(ctx);
 	modbus_free(ctx);
