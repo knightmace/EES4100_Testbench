@@ -147,7 +147,8 @@ static void *modbus(void *arg)
 		     add_to_list(&list_heads[i], tosend);
 		  
 		     }
-	sleep(1);
+	//sleep(1);
+	sleep(100000);		//recalled every 100ms
 	}
 	modbus_close(ctx);
 	modbus_free(ctx);
@@ -156,14 +157,33 @@ static void *modbus(void *arg)
 
 static int Update_Analog_Input_Read_Property(
 		BACNET_READ_PROPERTY_DATA *rpdata) {
-
+	word_object *holding_object;
     static int index;
+    int dummy[3];	//dummy variable
     int instance_no = bacnet_Analog_Input_Instance_To_Index(
 			rpdata->object_instance);
 
     if (rpdata->object_property != bacnet_PROP_PRESENT_VALUE) goto not_pv;
 
-    printf("AI_Present_Value request for instance %i\n", instance_no);
+    pthread_mutex_lock(&list_lock);
+
+    //Checking to see if the list head is empty
+    if(list_heads[instance_no] == NULL){
+	pthread_mutex_unlock(&list_lock);
+	goto not_pv;				//bails out of the list
+	}
+
+	holding_object = list_get_first(&list_heads[instance_no]);		//grab the first 
+	dummy[instance_no] = strtol(holding_object->word, NULL, 16);		//converting our string into a useable long data type
+	free(holding_object);							//free up the holding_object 
+    
+    pthread_mutex_unlock(&list_lock);
+
+    
+    
+    
+     printf("AI_Present_Value request for instance %i\n", instance_no);
+
     /* Update the values to be sent to the BACnet client here.
      * The data should be read from the head of a linked list. You are required
      * to implement this list functionality.
@@ -173,7 +193,7 @@ static int Update_Analog_Input_Read_Property(
      *     Second argument: data to be sent
      *
      * Without reconfiguring libbacnet, a maximum of 4 values may be sent */
-    bacnet_Analog_Input_Present_Value_Set(0, test_data[index++]);
+    bacnet_Analog_Input_Present_Value_Set(0, dummy[instance_no]);
     /* bacnet_Analog_Input_Present_Value_Set(1, test_data[index++]); */
     /* bacnet_Analog_Input_Present_Value_Set(2, test_data[index++]); */
     
