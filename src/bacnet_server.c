@@ -24,15 +24,19 @@
 #define SERVER_ADDR "127.0.0.1"
 #define SERVER_PORT 10000
 #define DATA_LENGTH 256
-#define NUM_LISTS   2
+//#define NUM_LISTS   2
+#define NUM_LISTS   4
+
 #define LISTEN_BACKLOG 1
 #define QUIT_STRING "exit"
 
-#define MODBUS_SERVER_ADDR "127.0.0.1"
-//#define MODBUS_SERVER_ADDR "140.159.153.159"
+//#define MODBUS_SERVER_ADDR "127.0.0.1"
+#define MODBUS_SERVER_ADDR "140.159.153.159"
 #define MODBUS_TCP_DEFAULT_PORT 502 
 
-#define BACNET_INSTANCE_NO	    12
+
+#define BACNET_INSTANCE_NO          4 
+//#define BACNET_INSTANCE_NO	    12
 #define BACNET_PORT		    0xBAC1
 #define BACNET_INTERFACE	    "lo"
 #define BACNET_DATALINK_TYPE	    "bvlc"
@@ -42,7 +46,9 @@
 
 #if RUN_AS_BBMD_CLIENT
 #define BACNET_BBMD_PORT	    0xBAC0
-#define BACNET_BBMD_ADDRESS	    "127.0.0.1"
+//#define BACNET_BBMD_ADDRESS	    "127.0.0.1"
+#define BACNET_BBMD_ADDRESS         "140.159.160.7"
+
 #define BACNET_BBMD_TTL		    90
 #endif
 
@@ -138,7 +144,8 @@ static void *modbus(void *arg)
 	       modbus_free(ctx);
 	       return -1;										                }
 	while(1){
-	rc = modbus_read_registers(ctx, 12, 1, tab_reg);	//receive buffer from MODBUS
+	//rc = modbus_read_registers(ctx, 12, 1, tab_reg);	//receive buffer from MODBUS
+       rc = modbus_read_registers(ctx, 120,4, tab_reg);      //receive buffer from MODBUS --> device no, instance no
 	if (rc == -1) {						//return warning, kill warning
 		fprintf(stderr, "%s\n", modbus_strerror(errno));
 		return -1;
